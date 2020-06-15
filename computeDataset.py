@@ -17,16 +17,20 @@ if __name__ == "__main__":
     #         path = download_Marketdataset.download_url("./CSVmarketfiles/"+file, file[:-4])
     #         image_list = []
     #         for img in os.listdir('./images/'+file[:-4]):
-    #             print(img)
-    #             netBB.evaluateBB('./images/'+file[:-4]+'/'+img)
+    #             if(img[-4:] == ".jpg" or img[-4:] == ".png"):
+    #                 print(img)
+    #                 netBB.evaluateBB('./images/'+file[:-4]+'/'+img)
 
 
 
     # script to analyze all the imgs into a folder (for us is images)
-
+    for img in os.listdir("./images"):
+        print(img)
+        netBB.evaluateBB("./images/"+img)
     list_subfolders_with_paths = [f.path for f in os.scandir("./images") if f.is_dir()]
     for path in list_subfolders_with_paths:
         print(path)
         for img in os.listdir(path):
-            print(img)
-            netBB.evaluateBB(path+"/"+img)
+            if(img[-4:] == ".jpg" or img[-4:] == ".png"):
+                print(img)
+                netBB.evaluateBB(path+"/"+img)

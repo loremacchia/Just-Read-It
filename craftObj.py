@@ -134,6 +134,7 @@ class CraftNet(object):
 
 
     def evaluateBB(self, image_path):
+        print(image_path)
         image = imgproc.loadImage(image_path)
         t = time.time()
         tnew = t

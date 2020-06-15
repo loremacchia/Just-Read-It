@@ -47,9 +47,20 @@ class CrnnOcr(object):
             cropped = cv2.rotate(cropped, cv2.ROTATE_90_CLOCKWISE)
         if(len(cropped[0]) > 0):
             cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2RGB)
-            cropped_pil = Image.fromarray(cropped)
-            string = self.computeOCR(cropped_pil)
-            string1 = editDistance.nGram(string)
+            croppedPil = Image.fromarray(cropped)
+            string = self.computeOCR(croppedPil)
+            
+            croppedRot = cv2.rotate(cropped, cv2.ROTATE_180)
+            croppedPilRot = Image.fromarray(croppedRot)
+            stringRot = self.computeOCR(croppedPilRot)
+
+            res = editDistance.compareStrings(string,stringRot)
+            if(res[2] == 1):
+                string = stringRot
+                img = cv2.rotate(img, cv2.ROTATE_180)
+                cropped = croppedRot
+
+            string1 = res[0]
             if(string1 == "" or string1 == None):
                 if(x - 6 > 0):
                     x -= 6
@@ -64,9 +75,23 @@ class CrnnOcr(object):
                 cropped = img[y: y + h, x: x + w]
                 if h > w:
                     cropped = cv2.rotate(cropped, cv2.ROTATE_90_CLOCKWISE)
-                cropped_pil = Image.fromarray(cropped)  
-                string = self.computeOCR(cropped_pil)
-                string1 = editDistance.nGram(string)  
+                if(len(cropped[0]) > 0):
+                    cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2RGB)
+                    croppedPil = Image.fromarray(cropped)
+                    string = self.computeOCR(croppedPil)
+                    
+                    croppedRot = cv2.rotate(cropped, cv2.ROTATE_180)
+                    croppedPilRot = Image.fromarray(croppedRot)
+                    stringRot = self.computeOCR(croppedPilRot)
+
+                    res = editDistance.compareStrings(string,stringRot)
+                    if(res[2] == 1):
+                        string = stringRot
+                        img = cv2.rotate(img, cv2.ROTATE_180)
+                        cropped = croppedRot
+
+                    string1 = res[0]
+
             if(string1 == "" or string1 == None):
                 iteration += 1
                 string = string.replace("/","")

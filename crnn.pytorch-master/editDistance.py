@@ -48,10 +48,10 @@ def nGram(string, jaccardCoeff = 0.6):
     
     if minIndex != -1:
         # print("La parola più vicina a ", string, " è ", jaccardWords[minIndex])
-        return jaccardWords[minIndex]
+        return (jaccardWords[minIndex], minIndex)
     else:
         # print("La parola ", string, " non ha parole vicine nel dizionario")
-        return ""
+        return ("",-1)
 
 def coefficenteJaccard(str1, str2):
     str1 = set(str1)
@@ -81,6 +81,16 @@ def editDistance(x, y):
                 c[i][j] = c[i][j-1] + 1
     return c[i][j]
 
+def compareStrings(str1, str2):
+    res1 = nGram(str1)
+    res2 = nGram(str2)
+    print(res1)
+    print(res2)
+    if(res1[1] > res2[1]):
+        res2 += (1,)
+        return res2
+    res1 += (0,)
+    return res1
 
 n = 3
 dict = createDictionary(n)
