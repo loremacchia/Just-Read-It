@@ -42,7 +42,7 @@ def str2bool(v):
     return v.lower() in ("yes", "y", "true", "t", "1")
 
 def getNameAndFolder(imagePath):
-    return (imagePath[-8:], imagePath[7:-9])
+    return (imagePath[-8:], imagePath[8:-9])
 
 
 # Parameters
@@ -135,7 +135,10 @@ class CraftNet(object):
 
     def evaluateBB(self, image_path):
         image = imgproc.loadImage(image_path)
+        t = time.time()
+        tnew = t
         bboxes, polys, score_text = self.test_net(image, text_thresholdVal, link_thresholdVal, low_textVal, isCuda, polyVal)
+        deltaTime = time.time() - tnew
         # # save image with BB
         # filename, file_ext = os.path.splitext(os.path.basename(image_path))
         # real_folder = result_folder + '/' + image_path.replace('images', '').replace(filename + file_ext, '')
@@ -144,18 +147,19 @@ class CraftNet(object):
             curImg = {
                 "BBs" : defaultdict(dict),
                 "pretrained" : "MLT",
-                # "procTime" : deltaTime,
+                "procTime" : deltaTime,
                 "OCR" : "CRNN",
             }
         for i in range(len(polys)):
             tnew = time.time()
             incorrect, correct = self.ocrObj.getString(image, polys[i])
+            print(incorrect, correct)
             if(isTest):
                 curImg["BBs"][i] = {
                     "BB" : polys[i].tolist(),
                     "strings" : incorrect,
                     "stringsCorrect" : correct,
-                    # "ocrTime" : time.time() - tnew
+                    "ocrTime" : time.time() - tnew
                 }
         if(isTest):
             name, folder = getNameAndFolder(image_path)

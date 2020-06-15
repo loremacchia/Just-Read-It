@@ -47,10 +47,10 @@ def nGram(string, jaccardCoeff = 0.6):
             minIndex = result[j][0]
     
     if minIndex != -1:
-        print("La parola più vicina a ", string, " è ", jaccardWords[minIndex])
+        # print("La parola più vicina a ", string, " è ", jaccardWords[minIndex])
         return jaccardWords[minIndex]
     else:
-        print("La parola ", string, " non ha parole vicine nel dizionario")
+        # print("La parola ", string, " non ha parole vicine nel dizionario")
         return ""
 
 def coefficenteJaccard(str1, str2):

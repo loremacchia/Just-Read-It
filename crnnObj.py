@@ -23,7 +23,6 @@ class CrnnOcr(object):
         self.converter = utils.strLabelConverter(self.alphabet)
 
     def computeOCR(self, img):
-        print("pino")
         transformer = dataset.resizeNormalize((100, 32))
         image = img.convert('L')
         image = transformer(image)
@@ -46,43 +45,48 @@ class CrnnOcr(object):
         cropped = img[y: y + h, x: x + w]    
         if h > w:
             cropped = cv2.rotate(cropped, cv2.ROTATE_90_CLOCKWISE)
-        if(not cropped.all()):
-            print(os.getcwd())
-            cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2RGB)
-            cropped_pil = Image.fromarray(cropped)
-            string = self.computeOCR(cropped_pil)
-            string1 = editDistance.nGram(string)
-            if(string1 == "" or string1 == None):
-                if(x - 6 > 0):
-                    x -= 6
-                else:
-                    x = 0
-                if(y - 6 > 0):
-                    y -= 6
-                else:
-                    y = 0
-                print(x,y,w,h)
-                w += 12
-                h += 12
-                cropped = img[y: y + h, x: x + w]
-                if h > w:
-                    cropped = cv2.rotate(cropped, cv2.ROTATE_90_CLOCKWISE)
-                cropped_pil = Image.fromarray(cropped)  
-                string = self.computeOCR(cropped_pil)
-                string1 = editDistance.nGram(string)  
-            if(string1 == "" or string1 == None):
-                iteration += 1
-                string = string.replace("/","")
-                cv2.imwrite("./result/wrongImg/" + string + ".jpg",cropped)
-                return (string, None)
+        # if(not cropped.all()):
+        cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2RGB)
+        cropped_pil = Image.fromarray(cropped)
+        string = self.computeOCR(cropped_pil)
+        string1 = editDistance.nGram(string)
+        if(string1 == "" or string1 == None):
+            if(x - 6 > 0):
+                x -= 6
             else:
-                string1 = string1.replace("/","")
-                cv2.imwrite("./result/goodImg/"+string1+".jpg", cropped)
-                return (string, string1)
-        else:
+                x = 0
+            if(y - 6 > 0):
+                y -= 6
+            else:
+                y = 0
+            w += 12
+            h += 12
+            cropped = img[y: y + h, x: x + w]
+            if h > w:
+                cropped = cv2.rotate(cropped, cv2.ROTATE_90_CLOCKWISE)
+            cropped_pil = Image.fromarray(cropped)  
+            string = self.computeOCR(cropped_pil)
+            string1 = editDistance.nGram(string)  
+        if(string1 == "" or string1 == None):
             iteration += 1
-            cv2.imwrite("./result/wrongImg/" + str(iteration) + ".jpg",cropped)
-            return (None, None)
+            string = string.replace("/","")
+            cv2.imwrite("./result/wrongImg/" + string + ".jpg",cropped)
+            string1 = None
+        else:
+            string1 = string1.replace("/","")
+            cv2.imwrite("./result/goodImg/"+string1+".jpg", cropped)
+        if(string == "" or string == None):
+            string = string.replace("/","")
+            cv2.imwrite("./result/wrongImgStr/" + string + ".jpg",cropped)
+            string1 = None
+        else:
+            string = string.replace("/","")
+            cv2.imwrite("./result/goodImgStr/"+string+".jpg", cropped)
+        return (string, string1)
+        # else:
+        #     iteration += 1
+        #     cv2.imwrite("./result/wrongImg/" + str(iteration) + ".jpg",cropped)
+        #     return (None, None)
 
 if __name__ == "__main__":
     obj = CrnnOcr()
