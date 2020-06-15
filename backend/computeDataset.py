@@ -2,13 +2,13 @@ import sys
 sys.path.insert(1, './E-Shop Dataset')
 import download_Marketdataset
 import craftObj
-import crnnObj
+import crnnObjFlip
 import os
 from os.path import isfile, join
 import glob
 
 if __name__ == "__main__":
-    ocrObj = crnnObj.CrnnOcr()
+    ocrObj = crnnObjFlip.CrnnOcr()
     netBB = craftObj.CraftNet(ocrObj)
     # script to download all the imgs from a csv and analyze them (for all the files)
 

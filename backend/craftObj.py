@@ -140,6 +140,7 @@ class CraftNet(object):
         tnew = t
         bboxes, polys, score_text = self.test_net(image, text_thresholdVal, link_thresholdVal, low_textVal, isCuda, polyVal)
         deltaTime = time.time() - tnew
+        words = []
         # # save image with BB
         # filename, file_ext = os.path.splitext(os.path.basename(image_path))
         # real_folder = result_folder + '/' + image_path.replace('images', '').replace(filename + file_ext, '')
@@ -155,6 +156,7 @@ class CraftNet(object):
             tnew = time.time()
             incorrect, correct = self.ocrObj.getString(image, polys[i])
             print(incorrect, correct)
+            words.append((incorrect,correct))
             if(isTest):
                 curImg["BBs"][i] = {
                     "BB" : polys[i].tolist(),
@@ -167,7 +169,15 @@ class CraftNet(object):
             self.jsonFile[folder][name] = curImg
             with open("./CRAFT-pytorch-master/stats.json", "w") as write_file:
                 json.dump(self.jsonFile, write_file, sort_keys=True, indent=4)
-        return polys
+        # return polys
+        corr = ""
+        incorr = ""
+        for w in words:
+            corr.join(w[1] + "  ")
+            incorr.join(w[0] + "  ")
+        print(corr)
+        print(incorr)
+        return words
 
 
 if __name__ == "__main__":

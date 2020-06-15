@@ -82,13 +82,29 @@ def editDistance(x, y):
     return c[i][j]
 
 def compareStrings(str1, str2):
+    print("\n\n\n\n")
+    print(str1 + "  " + str2)
+    if(len(str1) < 3 and len(str2) < 3):
+        return None
+    if(len(str1) < 3):
+        res2 = nGram(str2)
+        res2 += (1,)
+        return res2 
+    if(len(str2) < 3):
+        res1 = nGram(str1)
+        res1 += (0,)
+        return res1
     res1 = nGram(str1)
     res2 = nGram(str2)
     print(res1)
     print(res2)
-    if(res1[1] > res2[1]):
+    print(str(res1[1]/len(str1)) + "  " + str(res2[1]/len(str2)))
+    print(res1[1]/len(str1) > res2[1]/len(str2))
+    if((res1[1]/len(str1) > res2[1]/len(str2) and res2[1] >= 0) or (res1[1] < 0 and res2[1] >= 0)):
+        print("choose: "+res2[0])
         res2 += (1,)
         return res2
+    print("choose: "+res1[0])
     res1 += (0,)
     return res1
 

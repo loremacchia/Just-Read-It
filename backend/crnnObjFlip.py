@@ -55,13 +55,14 @@ class CrnnOcr(object):
             stringRot = self.computeOCR(croppedPilRot)
 
             res = editDistance.compareStrings(string,stringRot)
-            if(res[2] == 1):
-                string = stringRot
-                img = cv2.rotate(img, cv2.ROTATE_180)
-                cropped = croppedRot
+            if(res != None):
+                if(res[2] == 1):
+                    string = stringRot
+                    img = cv2.rotate(img, cv2.ROTATE_180)
+                    cropped = croppedRot
 
-            string1 = res[0]
-            if(string1 == "" or string1 == None):
+                string1 = res[0]
+            else:
                 if(x - 6 > 0):
                     x -= 6
                 else:
@@ -85,12 +86,15 @@ class CrnnOcr(object):
                     stringRot = self.computeOCR(croppedPilRot)
 
                     res = editDistance.compareStrings(string,stringRot)
-                    if(res[2] == 1):
-                        string = stringRot
-                        img = cv2.rotate(img, cv2.ROTATE_180)
-                        cropped = croppedRot
+                    if(res != None):
+                        if(res[2] == 1):
+                            string = stringRot
+                            img = cv2.rotate(img, cv2.ROTATE_180)
+                            cropped = croppedRot
 
-                    string1 = res[0]
+                        string1 = res[0]
+                    else:
+                        string1 = None
 
             if(string1 == "" or string1 == None):
                 iteration += 1
