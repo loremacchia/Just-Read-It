@@ -1,5 +1,5 @@
-import cv2;
-import numpy as np;
+import cv2
+import numpy as np
 import pytesseract
 import os
 import csv
@@ -11,9 +11,8 @@ def getTXT(parent, img):
     txtPath = "result/"+parent+"/res_"+img+".txt"
     return open(txtPath,"r")
 
-def getString(image, bb):
+def getString(img, bb):
     global iteration
-    img = cv2.imread(image)
     (x,y,w,h) = cv2.boundingRect(bb) # returns (x,y,w,h) of the rect
     cropped = img[y: y + h, x: x + w]    
     if h > w:

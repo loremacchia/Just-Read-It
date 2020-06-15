@@ -12,6 +12,7 @@ list_products = ['artworks.csv', 'beauty.csv', 'biscuits.csv', 'books.csv', 'boy
 # legge il file csv e restituisce i numeri (tipo string) di riga degli URL di immagini con testo
 def read_number_row_csv(csv_name):
     string_set = set()  # uso set per avere elementi unici
+    print(os.getcwd())
     with open(csv_name) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for riga in csv_reader:
@@ -24,12 +25,13 @@ def read_number_row_csv(csv_name):
 
 # passo in ingresso il nome del file csv e il numero di url da controllare per il download (se num_url == None allora vengono prese tutte le immagini della cartella)
 def download_url(csv_name, type_prod, num_url = None):
+    wdir = os.getcwd()
     # Se la working directory al momento non è corretta viene cambiata per vedere E-Shop Dataset/amazon-scrape.json
-    while not os.path.isfile('E-Shop Dataset/amazon-scrape.json'):
-        os.chdir('../')
+    if not os.path.isfile('amazon-scrape.json'):
+        os.chdir('./E-Shop Dataset')
 
     # Opening JSON file
-    with open('E-Shop Dataset/amazon-scrape.json', 'r') as openfile:
+    with open('amazon-scrape.json', 'r') as openfile:
         # Reading from json file
         json_object = json.load(openfile)  # è un dizionario nidificato
 
@@ -38,9 +40,9 @@ def download_url(csv_name, type_prod, num_url = None):
     ind = 0  # indice utilizzato per la rinominazione delle immagini
 
     # Crea una cartella dove mettere tutti i download delle immagini 
-    if(not os.path.isdir('E-Shop Dataset/CSVmarketfiles/'+type_prod)):
-        os.mkdir('E-Shop Dataset/CSVmarketfiles/'+type_prod)
-    os.chdir('E-Shop Dataset/CSVmarketfiles/'+type_prod)
+    if(not os.path.isdir('../images/'+type_prod)):
+        os.mkdir('../images/'+type_prod)
+    os.chdir('../images/'+type_prod)
     print(number_set)
 
     if num_url != None: # Prende solo le prime num_url immagini del file
@@ -68,15 +70,17 @@ def download_url(csv_name, type_prod, num_url = None):
             os.rename(my_file[5], sort_str_list[ind] + '.jpg')
             ind += 1
             print("End.")
+    os.chdir(wdir)
+    return "./images/"+type_prod
     
 
 
 # creo il dizionario con le scritte dei prodotti di un determinato file csv
 def dictionary_dataset():
     string_set = set()  # uso set per avere elementi unici
-    for file in os.listdir("E-Shop Dataset/CSVmarketfiles"):
+    for file in os.listdir("CSVmarketfiles"):
         if file.endswith(".csv"):
-            with open('E-Shop Dataset/CSVmarketfiles/'+file) as csv_file:
+            with open('CSVmarketfiles/'+file) as csv_file:
                 csv_reader = csv.reader(csv_file, delimiter=',')
                 for riga in csv_reader:
                     numb = riga[9]  # posizione dove c'è il testo
@@ -86,13 +90,13 @@ def dictionary_dataset():
 
 if __name__ == "__main__":
     # Itera su tutti i file della cartella e scarica le relative immagini 
-    # for file in os.listdir("E-Shop Dataset/CSVmarketfiles"):
-    #     if file.endswith(".csv"):
-    #         download_url('E-Shop Dataset/CSVmarketfiles/'+file, file[:-4])
-    # download_url('E-Shop Dataset/CSVmarketfiles/healthpersonalcare.csv', 'healthpersonalcare', 10)
-    dict = dictionary_dataset()
-    f=open('Tesseract/dictionary.txt','w')
-    for ele in dict:
-        f.write(ele+'\n')
+    for file in os.listdir("CSVmarketfiles"):
+        if file.endswith(".csv"):
+            download_url('CSVmarketfiles/'+file, file[:-4])
+    # download_url('CSVmarketfiles/healthpersonalcare.csv', 'healthpersonalcare', 10)
+    # dict = dictionary_dataset()
+    # f=open('Tesseract/dictionary.txt','w')
+    # for ele in dict:
+    #     f.write(ele+'\n')
     
     # print(len(dictionary_dataset()))
