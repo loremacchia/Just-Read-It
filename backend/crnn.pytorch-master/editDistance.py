@@ -20,7 +20,7 @@ def getWords():
     return parole
 
 # Usare come nGram("gigi")
-def nGram(string, jaccardCoeff = 0.6):
+def nGram(string, jaccardCoeff = 0.8):
     global n
     global dict
     listaParole = []

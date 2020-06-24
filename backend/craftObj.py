@@ -21,7 +21,7 @@ import imgproc
 import file_utils
 import json
 import zipfile
-import crnnObj
+import crnnObjFlip
 from collections import defaultdict
 from craft import CRAFT
 from collections import OrderedDict
@@ -42,7 +42,7 @@ def str2bool(v):
     return v.lower() in ("yes", "y", "true", "t", "1")
 
 def getNameAndFolder(imagePath):
-    return (imagePath[-8:], imagePath[8:-9])
+    return (imagePath[-8:], imagePath[9:-9])
 
 
 # Parameters
@@ -134,8 +134,20 @@ class CraftNet(object):
 
 
     def evaluateBB(self, image_path):
+        # gridWords = {
+        #     "topLeft" = [],
+        #     "top" = [],
+        #     "topRight" = [],
+        #     "centerLeft" = [],
+        #     "center" = [],
+        #     "centerRight" = [],
+        #     "bottomLeft" = [],
+        #     "bottom" = [],
+        #     "bottomRight" = []
+        # }
         print(image_path)
         image = imgproc.loadImage(image_path)
+
         t = time.time()
         tnew = t
         bboxes, polys, score_text = self.test_net(image, text_thresholdVal, link_thresholdVal, low_textVal, isCuda, polyVal)
@@ -154,15 +166,19 @@ class CraftNet(object):
             }
         for i in range(len(polys)):
             tnew = time.time()
-            incorrect, correct = self.ocrObj.getString(image, polys[i])
-            print(incorrect, correct)
+            # incorrect, correct = self.ocrObj.getString(image, polys[i])
+            # distTime = time.time() - tnew
+            # print(incorrect, correct) 
+            # tnew = time.time()
+            incorrect, correct = self.ocrObj.getStringnGram(image, polys[i])
+            nTime = time.time() - tnew
             words.append((incorrect,correct))
             if(isTest):
                 curImg["BBs"][i] = {
                     "BB" : polys[i].tolist(),
                     "strings" : incorrect,
                     "stringsCorrect" : correct,
-                    "ocrTime" : time.time() - tnew
+                    "ocrTime" : nTime
                 }
         if(isTest):
             name, folder = getNameAndFolder(image_path)
@@ -173,14 +189,88 @@ class CraftNet(object):
         corr = ""
         incorr = ""
         for w in words:
-            corr.join(w[1] + "  ")
-            incorr.join(w[0] + "  ")
+            if(w[1] != None):
+                corr.join(w[1] + "  ")
+            if(w[0] != None):
+                incorr.join(w[0] + "  ")
         print(corr)
         print(incorr)
-        return words
+        return self.evaluateResponse(curImg["BBs"],image)
+
+    def getQuadrant(self,bb, image):
+        shape = image.shape
+        newRect = [bb[0][0], bb[0][1], bb[1][0], bb[2][1]]
+        xPt = newRect[0] + (newRect[2]-newRect[0])/2
+        yPt = newRect[1] + (newRect[3]-newRect[1])/2
+        xQuad = 0
+        yQuad = 0
+        if(0 <= xPt < shape[0]/3):
+            xQuad = 1
+        elif(shape[0]/3 <= xPt < shape[0]*2/3):
+            xQuad = 2
+        else:
+            xQuad = 3
+        if(0 <= yPt < shape[1]/3):
+            yQuad = 0
+        elif(shape[1]/3 <= yPt < shape[1]*2/3):
+            yQuad =1
+        else:
+            yQuad = 2
+        return xQuad + yQuad*3
+
+    def evaluateResponse(self,bbValues,image):
+        gridWords = {
+            1 : [],
+            2 : [],
+            3 : [],
+            4 : [],
+            5 : [],
+            6 : [],
+            7 : [],
+            8 : [],
+            9 : []
+        }
+        words = 0
+        threeWords = [("",0),("",0),("",0)]
+        for i in bbValues:
+            if(bbValues[i]["stringsCorrect"] != None):
+                words += 1
+                print(bbValues[i]["stringsCorrect"])
+                gridWords[self.getQuadrant(bbValues[i]["BB"],image)].append(bbValues[i]["stringsCorrect"])
+                found = False
+                j = 0
+                while not found and j < len(threeWords):
+                    if(threeWords[j][1] < self.getArea(bbValues[i]["BB"])):
+                        found = True
+                        threeWords[j] = (bbValues[i]["stringsCorrect"], self.getArea(bbValues[i]["BB"]))
+                    j += 1
+        dictionary = {
+            "grid":{
+                "Top Left" : gridWords[1],
+                "Top" : gridWords[2],
+                "Top Right" : gridWords[3],
+                "Center Left" : gridWords[4],
+                "Center" : gridWords[5],
+                "Center Right" : gridWords[6],
+                "Bottom Left" : gridWords[7],
+                "Bottom" : gridWords[8],
+                "Bottom Right" : gridWords[9]
+            },
+            "threeWords":[threeWords[0][0],threeWords[1][0],threeWords[2][0]],
+            "newWords":words
+        }
+
+        print("gigi2")
+        print(dictionary)
+        return dictionary
+
+    def getArea(self, bb):
+        newRect = [bb[0][0], bb[0][1], bb[1][0], bb[2][1]]
+        return (newRect[2]-newRect[0])*(newRect[3]-newRect[1])
+        
 
 
 if __name__ == "__main__":
-    ocrObj = crnnObj.CrnnOcr()
+    ocrObj = crnnObjFlip.CrnnOcr()
     netBB = CraftNet(ocrObj)
     netBB.evaluateBB("images/beauty/0027.jpg")

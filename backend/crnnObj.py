@@ -45,7 +45,7 @@ class CrnnOcr(object):
         cropped = img[y: y + h, x: x + w]    
         if h > w:
             cropped = cv2.rotate(cropped, cv2.ROTATE_90_CLOCKWISE)
-        if(len(cropped[0]) > 0):
+        if(cropped[0] == None or len(cropped[0]) > 0):
             cropped = cv2.cvtColor(cropped, cv2.COLOR_BGR2RGB)
             cropped_pil = Image.fromarray(cropped)
             string = self.computeOCR(cropped_pil)

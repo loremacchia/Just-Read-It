@@ -24,13 +24,20 @@ if __name__ == "__main__":
 
 
     # script to analyze all the imgs into a folder (for us is images)
-    for img in os.listdir("./images"):
-        print(img)
-        netBB.evaluateBB("./images/"+img)
-    list_subfolders_with_paths = [f.path for f in os.scandir("./images") if f.is_dir()]
-    for path in list_subfolders_with_paths:
-        print(path)
-        for img in os.listdir(path):
-            if(img[-4:] == ".jpg" or img[-4:] == ".png"):
-                print(img)
-                netBB.evaluateBB(path+"/"+img)
+    # for img in os.listdir("./images"):
+    #     print(img)
+    #     netBB.evaluateBB("./images/"+img)
+    # list_subfolders_with_paths = [f.path for f in os.scandir("./images") if f.is_dir()]
+    # for path in list_subfolders_with_paths:
+    #     print(path)
+    #     for img in os.listdir(path):
+    #         if(img[-4:] == ".jpg" or img[-4:] == ".png"):
+    #             print(img)
+    #             print(netBB.evaluateBB(path+"/"+img))
+
+    # script to analze a single image
+    print(netBB.evaluateBB("./images/2020-06-20_193015.897130.png"))
+    print(netBB.evaluateBB("./images/2020-06-20_193015.8971301.png"))
+    print(netBB.evaluateBB("./images/2020-06-20_193015.8971302.png"))
+    print(netBB.evaluateBB("./images/2020-06-20_193015.8971303.png"))
+

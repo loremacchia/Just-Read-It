@@ -14,6 +14,7 @@ netBB = craftObj.CraftNet(ocrObj)
 
 
 app = Flask(__name__)
+app.secret_key = b'sese'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def allowed_file(filename):
@@ -27,10 +28,10 @@ def upload_file():
     
     if request.method == 'POST':
         # check if the post request has the file part
-        if 'file' not in request.files:
+        if 'image' not in request.files:
             flash('No file part')
             return redirect(request.url)
-        file = request.files['file']
+        file = request.files['image']
         # if user does not select file, browser also
         # submit an empty part without filename
         if file.filename == '':
@@ -41,7 +42,7 @@ def upload_file():
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(path)
             print(netBB.evaluateBB(path))
-            return  jsonify({"data":os.path.isfile(os.path.join(app.config['UPLOAD_FOLDER'], filename))})  
+            return jsonify(netBB.evaluateBB(path)) 
     return jsonify({"data":"False"})
 
 if __name__ == '__main__':
