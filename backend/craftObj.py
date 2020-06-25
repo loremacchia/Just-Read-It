@@ -22,6 +22,7 @@ import file_utils
 import json
 import zipfile
 import crnnObjFlip
+import tesseractOCR
 from collections import defaultdict
 from craft import CRAFT
 from collections import OrderedDict
@@ -42,7 +43,9 @@ def str2bool(v):
     return v.lower() in ("yes", "y", "true", "t", "1")
 
 def getNameAndFolder(imagePath):
-    return (imagePath[-8:], imagePath[9:-9])
+    head, tail = os.path.split(imagePath)
+    return (tail, head)
+    # return (imagePath[-8:], imagePath[9:-9])
 
 
 # Parameters
@@ -63,6 +66,8 @@ link_thresholdVal = 0.4
 low_textVal = 0.4
 polyVal = False
 isTest = True
+includeTesseract = True
+saveResult = True
 
 
 class CraftNet(object):
@@ -134,20 +139,9 @@ class CraftNet(object):
 
 
     def evaluateBB(self, image_path):
-        # gridWords = {
-        #     "topLeft" = [],
-        #     "top" = [],
-        #     "topRight" = [],
-        #     "centerLeft" = [],
-        #     "center" = [],
-        #     "centerRight" = [],
-        #     "bottomLeft" = [],
-        #     "bottom" = [],
-        #     "bottomRight" = []
-        # }
         print(image_path)
         image = imgproc.loadImage(image_path)
-
+        imageCpy = image
         t = time.time()
         tnew = t
         bboxes, polys, score_text = self.test_net(image, text_thresholdVal, link_thresholdVal, low_textVal, isCuda, polyVal)
@@ -165,6 +159,8 @@ class CraftNet(object):
                 "OCR" : "CRNN",
             }
         for i in range(len(polys)):
+            if(saveResult):
+                cv2.rectangle(imageCpy, (int(polys[i][0][0]), int(polys[i][0][1])), (int(polys[i][1][0]), int(polys[i][2][1])), (255,0,0), 2)
             tnew = time.time()
             # incorrect, correct = self.ocrObj.getString(image, polys[i])
             # distTime = time.time() - tnew
@@ -172,19 +168,42 @@ class CraftNet(object):
             # tnew = time.time()
             incorrect, correct = self.ocrObj.getStringnGram(image, polys[i])
             nTime = time.time() - tnew
+            if(correct is not None and saveResult):
+                cv2.putText(imageCpy, correct, (int(polys[i][0][0]), int(polys[i][0][1] - 10)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0,0,255),2) 
             words.append((incorrect,correct))
+            if(includeTesseract):
+                tnew = time.time()
+                incTess, corrTess = tesseractOCR.getStringnGram(image, polys[i])
+                tessTime = time.time() - tnew
             if(isTest):
-                curImg["BBs"][i] = {
-                    "BB" : polys[i].tolist(),
-                    "strings" : incorrect,
-                    "stringsCorrect" : correct,
-                    "ocrTime" : nTime
-                }
+                if(includeTesseract):
+                    curImg["BBs"][i] = {
+                        "BB" : polys[i].tolist(),
+                        "strings" : incorrect,
+                        "stringsCorrect" : correct,
+                        "ocrTime" : nTime,
+                        "stringsTess": incTess,
+                        "stringsCorrectTess": corrTess,
+                        "ocrTimeTess": tessTime
+                    }
+                else:
+                    curImg["BBs"][i] = {
+                        "BB" : polys[i].tolist(),
+                        "strings" : incorrect,
+                        "stringsCorrect" : correct,
+                        "ocrTime" : nTime,
+                    }
         if(isTest):
             name, folder = getNameAndFolder(image_path)
             self.jsonFile[folder][name] = curImg
             with open("./CRAFT-pytorch-master/stats.json", "w") as write_file:
                 json.dump(self.jsonFile, write_file, sort_keys=True, indent=4)
+        if(saveResult):
+            name, folder = getNameAndFolder(image_path)
+            imageCpy = cv2.cvtColor(imageCpy, cv2.COLOR_BGR2RGB)
+            if(not os.path.exists("./result/edited/"+folder)):
+                os.makedirs("./result/edited/"+folder)
+            cv2.imwrite("./result/edited/"+folder+"/"+name, imageCpy)# + image_path
         # return polys
         corr = ""
         incorr = ""
@@ -236,7 +255,7 @@ class CraftNet(object):
         }
         words = 0
         threeWords = [("",0),("",0),("",0)]
-        
+        full = False
         for i in bbValues:
             if(bbValues[i]["stringsCorrect"] != None):
                 words += 1
@@ -245,9 +264,13 @@ class CraftNet(object):
                 found = False
                 j = 0
                 while not found and j < len(threeWords):
-                    if(threeWords[j][1] < self.getArea(bbValues[i]["BB"])):
+                    print(threeWords)
+                    if((threeWords[j][1] < self.getArea(bbValues[i]["BB"]) and full) or threeWords[j][1] == 0):
                         found = True
                         threeWords[j] = (bbValues[i]["stringsCorrect"], self.getArea(bbValues[i]["BB"]))
+                    if(j == len(threeWords)-1):
+                        full = True
+
                     j += 1
         dictionary = {
             "grid":{
@@ -279,4 +302,4 @@ class CraftNet(object):
 if __name__ == "__main__":
     ocrObj = crnnObjFlip.CrnnOcr()
     netBB = CraftNet(ocrObj)
-    netBB.evaluateBB("images/beauty/0027.jpg")
+    netBB.evaluateBB("images/2020-06-20_193015.8971301.png")
