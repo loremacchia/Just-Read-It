@@ -197,25 +197,29 @@ class CraftNet(object):
         print(incorr)
         return self.evaluateResponse(curImg["BBs"],image)
 
-    def getQuadrant(self,bb, image):
+    def getQuadrant(self, bb, image):
         shape = image.shape
         newRect = [bb[0][0], bb[0][1], bb[1][0], bb[2][1]]
+        # cv2.rectangle(image, (int(newRect[0]), int(newRect[1])), (int(newRect[2]), int(newRect[3])), (255,0,0), 2)
+        print(newRect)
         xPt = newRect[0] + (newRect[2]-newRect[0])/2
         yPt = newRect[1] + (newRect[3]-newRect[1])/2
         xQuad = 0
         yQuad = 0
-        if(0 <= xPt < shape[0]/3):
+        if(0 <= xPt < shape[1]/3):
             xQuad = 1
-        elif(shape[0]/3 <= xPt < shape[0]*2/3):
+        elif(shape[1]/3 <= xPt < shape[1]*2/3):
             xQuad = 2
         else:
             xQuad = 3
-        if(0 <= yPt < shape[1]/3):
+        if(0 <= yPt < shape[0]/3):
             yQuad = 0
-        elif(shape[1]/3 <= yPt < shape[1]*2/3):
+        elif(shape[0]/3 <= yPt < shape[0]*2/3):
             yQuad =1
         else:
             yQuad = 2
+        # cv2.putText(image, str(xQuad + yQuad*3), (int(newRect[0]), int(newRect[1]-10)), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,255,12), 2)
+        
         return xQuad + yQuad*3
 
     def evaluateResponse(self,bbValues,image):
@@ -232,6 +236,7 @@ class CraftNet(object):
         }
         words = 0
         threeWords = [("",0),("",0),("",0)]
+        
         for i in bbValues:
             if(bbValues[i]["stringsCorrect"] != None):
                 words += 1
@@ -259,9 +264,10 @@ class CraftNet(object):
             "threeWords":[threeWords[0][0],threeWords[1][0],threeWords[2][0]],
             "newWords":words
         }
-
-        print("gigi2")
+        # cv2.imshow("gigi",image)
+        # cv2.waitKey(0)
         print(dictionary)
+        
         return dictionary
 
     def getArea(self, bb):

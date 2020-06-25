@@ -41,8 +41,8 @@ def upload_file():
             filename = secure_filename(file.filename)
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(path)
-            print(netBB.evaluateBB(path))
-            return jsonify(netBB.evaluateBB(path)) 
+            evaluation = netBB.evaluateBB(path)
+            return jsonify(evaluation) 
     return jsonify({"data":"False"})
 
 if __name__ == '__main__':
