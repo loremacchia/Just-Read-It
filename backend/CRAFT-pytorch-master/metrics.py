@@ -25,6 +25,8 @@ def checkBB(image, newBBs, csvFile):
                     jsonFile[i]["word"]["correct"] = row[-1:][0]
                     jsonFile[i]["word"]["new"] = newBBs[i]["strings"]
                     jsonFile[i]["word"]["newCorrected"] = newBBs[i]["stringsCorrect"]
+                    jsonFile[i]["word"]["newTesseract"] = newBBs[i]["stringsTess"]
+                    jsonFile[i]["word"]["newCorrectedTesseract"] = newBBs[i]["stringsCorrectTess"]
                     jsonFile[i]["datasetCoords"] = [[int(corrBB[0]),int(corrBB[1])],[int(corrBB[2]),int(corrBB[3])],[int(corrBB[4]),int(corrBB[5])],[int(corrBB[6]),int(corrBB[7])]]
     
     return jsonFile
@@ -53,6 +55,7 @@ if __name__ == "__main__":
 
     os.chdir("E-Shop Dataset/CSVmarketfiles")
     jsonFile = defaultdict(dict)
+    print(os.getcwd())
     for folder in stats:
         for file in stats[folder]:
             item = stats[folder][file]

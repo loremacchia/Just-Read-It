@@ -66,8 +66,8 @@ link_thresholdVal = 0.4
 low_textVal = 0.4
 polyVal = False
 isTest = True
-includeTesseract = True
-saveResult = True
+includeTesseract = False
+saveResult = False
 
 
 class CraftNet(object):
@@ -140,6 +140,7 @@ class CraftNet(object):
 
     def evaluateBB(self, image_path):
         print(image_path)
+        print(os.getcwd())
         image = imgproc.loadImage(image_path)
         imageCpy = image
         t = time.time()
@@ -212,15 +213,12 @@ class CraftNet(object):
                 corr.join(w[1] + "  ")
             if(w[0] != None):
                 incorr.join(w[0] + "  ")
-        print(corr)
-        print(incorr)
         return self.evaluateResponse(curImg["BBs"],image)
 
     def getQuadrant(self, bb, image):
         shape = image.shape
         newRect = [bb[0][0], bb[0][1], bb[1][0], bb[2][1]]
         # cv2.rectangle(image, (int(newRect[0]), int(newRect[1])), (int(newRect[2]), int(newRect[3])), (255,0,0), 2)
-        print(newRect)
         xPt = newRect[0] + (newRect[2]-newRect[0])/2
         yPt = newRect[1] + (newRect[3]-newRect[1])/2
         xQuad = 0
@@ -259,12 +257,10 @@ class CraftNet(object):
         for i in bbValues:
             if(bbValues[i]["stringsCorrect"] != None):
                 words += 1
-                print(bbValues[i]["stringsCorrect"])
                 gridWords[self.getQuadrant(bbValues[i]["BB"],image)].append(bbValues[i]["stringsCorrect"])
                 found = False
                 j = 0
                 while not found and j < len(threeWords):
-                    print(threeWords)
                     if((threeWords[j][1] < self.getArea(bbValues[i]["BB"]) and full) or threeWords[j][1] == 0):
                         found = True
                         threeWords[j] = (bbValues[i]["stringsCorrect"], self.getArea(bbValues[i]["BB"]))
@@ -289,7 +285,6 @@ class CraftNet(object):
         }
         # cv2.imshow("gigi",image)
         # cv2.waitKey(0)
-        print(dictionary)
         
         return dictionary
 

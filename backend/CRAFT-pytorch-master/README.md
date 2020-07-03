@@ -42,26 +42,28 @@ General | SynthText, IC13, IC17 | Eng + MLT | For general purpose | [Click](http
 IC15 | SynthText, IC15 | Eng | For IC15 only | [Click](https://drive.google.com/open?id=1i2R7UIUqmkUtF0jv_3MXTqmQ_9wuAnLf)
 LinkRefiner | CTW1500 | - | Used with the General Model | [Click](https://drive.google.com/open?id=1XSaFwBkOaFOdtk4Ane3DFyJGPRw6v5bO)
 
-* Run with pretrained model
+* Run with pretrained model in backend folder
 ``` (with python 3.7)
-python test.py --trained_model=[weightfile] --test_folder=[folder path to test images]
+python3 craftObj.py
 ```
 
 The result image and socre maps will be saved to `./result` by default.
 
-### Arguments
-* `--trained_model`: pretrained model
-* `--text_threshold`: text confidence threshold
-* `--low_text`: text low-bound score
-* `--link_threshold`: link confidence threshold
-* `--cuda`: use cuda for inference (default:True)
-* `--canvas_size`: max image size for inference
-* `--mag_ratio`: image magnification ratio
-* `--poly`: enable polygon type result
-* `--show_time`: show processing time
-* `--test_folder`: folder path to input images
-* `--refine`: use link refiner for sentense-level dataset
-* `--refiner_model`: pretrained refiner model
+### Argument Variables
+To imporve usability we have changed the user argument passing using variables instead. All the parameters of the author page are changed into variables (located in lines 55 - 70 of craftObj.py)
+* `result_folder`: folder where all the results are stored (default: './result')
+* `saveResult`: store the resulting image with printed bounding boxes and recognized text (default: False)
+* `includeTesseract`: include tesseract with CRNN (default: False)
+* `isTest`: generate stats.json (default: True)
+* `trained_model`: pretrained model (default:"./CRAFT-pytorch-master/craft_mlt_25k.pth")
+* `text_thresholdVal`: text confidence threshold (default: 0.7)
+* `low_textVal`: text low-bound score (default: 0.4)
+* `link_thresholdVal`: link confidence threshold (default: 0.4)
+* `isCuda`: use cuda for inference (default:True)
+* `canvas_size`: max image size for inference (default: 1200)
+* `mag_ratio`: image magnification ratio (default: 1.5)
+* `polyVal`: enable polygon type result (default: False)
+* `show_time`: show processing time (default: True)
 
 
 ## Links

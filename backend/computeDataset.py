@@ -36,8 +36,5 @@ if __name__ == "__main__":
     #             print(netBB.evaluateBB(path+"/"+img))
 
     # script to analze a single image
-    print(netBB.evaluateBB("./images/2020-06-20_193015.897130.png"))
-    print(netBB.evaluateBB("./images/2020-06-20_193015.8971301.png"))
-    print(netBB.evaluateBB("./images/2020-06-20_193015.8971302.png"))
-    print(netBB.evaluateBB("./images/2020-06-20_193015.8971303.png"))
+    # print(netBB.evaluateBB("./images/2020-06-20_193015.897130.png"))
 
