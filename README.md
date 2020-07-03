@@ -11,7 +11,7 @@ We have built a cross-platform application that allows a blind person to take a 
 - after the results are returned by the server the app first of all shows the **three most relevant** words as a popup and reads them through the screen reader, 
 - then the user is able to read all the words into a sliding window with a **table containing text** so that each table position is filled by the words found in the same position of the image.
 
-![Gif of the working application](demo/demo.gif | width = 400)
+<img src="demo/demo.gif" width="400">
 
 ## Implementation
 We have integrated two different Neural Networks to complete our end-to-end OCR task:
