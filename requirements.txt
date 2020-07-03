@@ -1,0 +1,10 @@
+difflib
+pytesseract
+csv
+json
+collections
+pandas
+matplotlib
+urllib
+flask
+glob

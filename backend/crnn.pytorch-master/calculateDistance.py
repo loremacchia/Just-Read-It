@@ -63,8 +63,6 @@ def control_distance(target_word):
     for word in list_words:
         ratio = SequenceMatcher(None, word.lower(), target_word.lower()).ratio()
         if ratio > 0.9 and len(target_word) == len(word):
-            print(target_word)
-            print(word)
             result.append(1)
             result.append(ratio)
             result.append(target_word)
