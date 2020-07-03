@@ -10,7 +10,8 @@ We have built a cross-platform application that allows a blind person to take a 
 - the user presses the **camera button** and a photo is shot,
 - after the results are returned by the server the app first of all shows the **three most relevant** words as a popup and reads them through the screen reader, 
 - then the user is able to read all the words into a sliding window with a **table containing text** so that each table position is filled by the words found in the same position of the image.
-![Gif of the working application](demo/demo.gif)
+
+![Gif of the working application](demo/demo.gif | width = 400)
 
 ## Implementation
 We have integrated two different Neural Networks to complete our end-to-end OCR task:
@@ -19,7 +20,8 @@ We have integrated two different Neural Networks to complete our end-to-end OCR 
 
 To test this system we have used the [mmm2018](https://github.com/jiang-public/MMM2018) dataset made by e-shop images with annotated text. 
 The obtained results are promising, as we can see in the following histogram, but can be improved training those neural networks with custom data.
-![Result of the algorithm output](demo/sample.png)
+
+![Result of the algorithm output](demo/sample.png | width = 400)
 
 ## Installation
 ### Frontend 
