@@ -21,7 +21,7 @@ We have integrated two different Neural Networks to complete our end-to-end OCR 
 To test this system we have used the [mmm2018](https://github.com/jiang-public/MMM2018) dataset made by e-shop images with annotated text. 
 The obtained results are promising, as we can see in the following histogram, but can be improved training those neural networks with custom data.
 
-![Result of the algorithm output](demo/sample.png | width = 400)
+<img src="demo/sample.png" width="400">
 
 ## Installation
 ### Frontend 
@@ -76,4 +76,5 @@ As written previously we have tested the obtained results w.r.t. the mmm2018 dat
 
 We have tested CRNN against Tesseract, another OCR algorithm, obtaining promising results as we can see in the following histogram.
 Results can be improved training CRNN and CRAFT neural networks with custom data tailored for our specific problem.
+
 ![Histogram showing the precision results of the two different approaches CRNN and Tesseract](demo/histogram.png)
