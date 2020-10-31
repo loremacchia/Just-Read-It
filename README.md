@@ -1,4 +1,4 @@
-# Just Read It
+# <img width="70" height="70" src="demo/icon.png">  Just Read It 
 ## To read the unreadable 
 We know that technology is increasing its support to our society day by day. This project is thought to be a part of this innovation process by providing a support to *blind people in going grocery shopping*.
 
