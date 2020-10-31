@@ -42,7 +42,7 @@ def upload_file():
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(path)
             evaluation = netBB.evaluateBB(path)
-            return jsonify(evaluation) 
+            return jsonify(evaluation)
     return jsonify({"data":"False"})
 
 if __name__ == '__main__':

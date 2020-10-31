@@ -1,6 +1,6 @@
 import requests
 import os
 print(os.getcwd())
-url = "http://deaec689aef6.ngrok.io"
-files = {'image': open('index.png', 'rb')}
+url = "http://38a21cb5e06c.ngrok.io "
+files = {'image': open('text.png', 'rb')}
 requests.post(url, files=files)

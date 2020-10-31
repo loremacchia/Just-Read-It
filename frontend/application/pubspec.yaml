@@ -35,6 +35,8 @@ dependencies:
   path: ^1.6.4
   google_fonts: ^1.1.0
   flutter_launcher_icons: ^0.7.3
+  flutter_spinkit: "^4.1.2"
+  string_validator: ^0.1.4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -104,4 +106,6 @@ flutter:
 flutter_icons:
   android: true
   ios: true
-  image_path: "images/visibility.png"
+  image_path: "images/icon.png"
+
+  #flutter pub pub run flutter_launcher_icons:main
